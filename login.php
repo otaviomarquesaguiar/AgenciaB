@@ -1,4 +1,29 @@
 <!DOCTYPE html>
+<?php
+    session_start();
+    include "conexao.php";
+
+    if(isset($_SESSION["usuario_id"])){
+        header("location:index.php");
+        exit;
+    }
+
+    $erro = "";
+    if($_SERVER["REQUESTED_METHOD"] == "POST"){
+        $email = trim($_POST['email'] ?? "");
+        $senha= $_POST['senha'] ?? "";
+
+        if($email === "" || $senha === ""){
+            $erro = "favor informar o email e a senha.";
+
+        }
+        else{
+            $sqlLogin = "select usuario_id,nome,email,  senha, tipo_perfil from tbl_usuarios where email = :email ";
+            $preparaLogin = $cn -> prepare ($sqlLogin)
+                $preparaLogin -> bindValue (":email", $email, PDO::PARAM-STR)
+        }
+    }
+?>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -29,7 +54,7 @@
             <p class="login-subtitle">Bem-vindo de volta! Insira seus dados para continuar.</p>
 
             <!-- Formulário de Login -->
-            <form action="autenticar.php" method="POST" class="login-form">
+            <form action="login.php" method="POST" class="login-form">
                 <div class="form-group">
                     <label for="email" class="form-label">E-mail</label>
                     <input type="email" id="email" name="email" class="form-input" placeholder="seu@email.com" required>
